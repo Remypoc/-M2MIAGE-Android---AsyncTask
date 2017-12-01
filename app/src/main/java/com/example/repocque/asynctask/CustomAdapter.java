@@ -2,6 +2,7 @@ package com.example.repocque.asynctask;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class CustomAdapter extends ArrayAdapter<Film> {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
         Film film = getItem(position);
         View view = convertView;
@@ -42,7 +42,6 @@ public class CustomAdapter extends ArrayAdapter<Film> {
         }
 
         ViewHolder viewHolder = new ViewHolder();
-
         viewHolder.image = view.findViewById(R.id.main_listview_item_image);
         viewHolder.title = view.findViewById(R.id.main_listview_item_title);
         viewHolder.date = view.findViewById(R.id.main_listview_item_year);
@@ -57,12 +56,11 @@ public class CustomAdapter extends ArrayAdapter<Film> {
         viewHolder.title.setText(film.getTitle());
         viewHolder.date.setText(s);
         viewHolder.production.setText(film.getProduction());
-
-        DownloadImage downloadImage = new DownloadImage();
-        try {
-            viewHolder.image.setImageBitmap(downloadImage.downloadImage());
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(film.getImage() != null) {
+            Log.i("Set image", "Set film image");
+            viewHolder.image.setImageBitmap(film.getImage());
+        } else {
+            viewHolder.image.setImageResource(R.mipmap.ic_launcher);
         }
 
         return view;
