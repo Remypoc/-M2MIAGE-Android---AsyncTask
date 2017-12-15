@@ -10,15 +10,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.repocque.asynctask.models.Film;
+
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class CustomAdapter extends ArrayAdapter<Film> {
 
-    CustomAdapter(@NonNull Context context, ArrayList<Film> films) {
+    CustomAdapter(@NonNull Context context, List<Film> films) {
         super(context, R.layout.main_listview_item, films);
     }
 

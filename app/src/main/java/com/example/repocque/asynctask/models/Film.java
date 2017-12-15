@@ -1,17 +1,25 @@
-package com.example.repocque.asynctask;
+package com.example.repocque.asynctask.models;
 
 import android.graphics.Bitmap;
 
+import com.orm.SugarRecord;
+import com.orm.dsl.Ignore;
+
 import java.util.Date;
 
-public class Film {
+public class Film extends SugarRecord {
 
+    @Ignore
     private Bitmap image;
+    private byte[] imageByte;
     private String title;
     private Date date;
     private String production;
 
-    Film(Bitmap image, String title, Date date, String production) {
+    public Film() {
+    }
+
+    public Film(Bitmap image, String title, Date date, String production) {
         this.image = image;
         this.title = title;
         this.date = date;
@@ -50,7 +58,13 @@ public class Film {
         this.production = production;
     }
 
+    public byte[] getImageByte() {
+        return imageByte;
+    }
 
+    public void setImageByte(byte[] imageByte) {
+        this.imageByte = imageByte;
+    }
 
     @Override
     public String toString() {

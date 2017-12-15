@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
+import com.example.repocque.asynctask.models.Film;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
@@ -35,8 +38,14 @@ public class DownloadImageTask extends AsyncTask<String, Integer, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap image) {
-        if(this.activity.get() != null) {
+        if (this.activity.get() != null && film.get() != null && adapter.get() != null) {
             film.get().setImage(image);
+
+            ByteArrayOutputStream stream =new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.PNG,90, stream);
+            byte[] image_byte = stream.toByteArray();
+            film.get().setImageByte(image_byte);
+            film.get().save();
             adapter.get().notifyDataSetChanged();
         }
     }

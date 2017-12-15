@@ -1,5 +1,7 @@
 package com.example.repocque.asynctask;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -7,8 +9,13 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.example.repocque.asynctask.models.Film;
+import com.orm.SugarContext;
+
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,7 +29,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        adapter = new CustomAdapter(this, new ArrayList<Film>());
+        // this.deleteDatabase("films.db");
+        SugarContext.init(this);
+
+        List<Film> films = new ArrayList<>();
+
+        for (Film film : Film.listAll(Film.class)) {
+
+            System.out.println(film);
+            ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(film.getImageByte());
+            Bitmap bitmap = BitmapFactory.decodeStream(arrayInputStream);
+            film.setImage(bitmap);
+            films.add(film);
+        }
+
+        adapter = new CustomAdapter(this, films);
 
         ListView lv = findViewById(R.id.main_listview);
         lv.setAdapter(adapter);
@@ -31,9 +52,10 @@ public class MainActivity extends AppCompatActivity {
         button_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Film film = new Film(null, "film" + i++, new Date(), "Blabla");
+                Film film = new Film(null, "film" + i++, new Date(), "prod");
                 adapter.add(film);
                 adapter.notifyDataSetChanged();
+                film.save();
             }
         });
 
@@ -49,6 +71,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button button_reset = findViewById(R.id.button_reset);
+        button_reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                i = 0;
+                adapter.clear();
+                Film.deleteAll(Film.class);
+            }
+        });
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -57,5 +89,11 @@ public class MainActivity extends AppCompatActivity {
                 downloadImageTask.execute(URL_IMAGE);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SugarContext.terminate();
     }
 }
